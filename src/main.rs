@@ -2,6 +2,8 @@ use std::{
     path::Path, fs, io::prelude::*
 };
 
+use image::* ;
+
 
 
 static CURRENT_DIR : &str = "." ;
@@ -15,7 +17,7 @@ fn main() {
     let outputDir = PrepareOutputDir() ;
     let paths = fs::read_dir( inputDir ).unwrap() ;
     for path in paths {
-    println!("Hello, {}!", path.unwrap().path().display() );
+        BisectImage( &path.unwrap().path(), &outputDir ) ;
     }
 }
 
@@ -30,4 +32,24 @@ fn PrepareOutputDir(
     }
     fs::create_dir( &outputDir ) ;
     outputDir.into_boxed_path()
+}
+
+
+
+fn BisectImage(
+    imageFilePath : &Path
+,   outputDir : &Path
+)
+{
+    let mut img = open( imageFilePath ).unwrap() ;
+    let width  = img.width() ;
+    let height = img.height() ;
+    let leftImage  = imageops::crop( &mut img,       0, 0, width/2, height ).to_image() ;
+    let rightImage = imageops::crop( &mut img, width/2, 0, width  , height ).to_image() ;
+    let fileNameStem = imageFilePath.file_stem().unwrap().to_str().unwrap() ;
+    let leftFilePath  = outputDir.join( fileNameStem.to_owned() + "-L.png" ) ;
+    let rightFilePath = outputDir.join( fileNameStem.to_owned() + "-R.png" ) ;
+    leftImage.save_with_format(  &leftFilePath,  ImageFormat::Png ) ;
+    rightImage.save_with_format( &rightFilePath, ImageFormat::Png ) ;
+    println!( "bisected {}", imageFilePath.file_name().unwrap().to_str().unwrap() ) ;
 }
