@@ -3,6 +3,7 @@ use std::{
 };
 
 use image::* ;
+use rayon::prelude::* ;
 
 
 
@@ -13,12 +14,13 @@ static OUTPUT_DIR  : &str = "output" ;
 
 
 fn main() {
+    println!( "Starting to bisect images ..." ) ;
     let inputDir = Path::new( CURRENT_DIR ).join( INPUT_DIR ) ;
     let outputDir = PrepareOutputDir() ;
     let paths = fs::read_dir( inputDir ).unwrap() ;
-    for path in paths {
+    paths.par_bridge().for_each( |path|{
         BisectImage( &path.unwrap().path(), &outputDir ) ;
-    }
+    } );
 }
 
 
