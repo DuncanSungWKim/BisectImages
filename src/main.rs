@@ -7,9 +7,9 @@ use rayon::prelude::* ;
 
 
 
-static CURRENT_DIR : &str = "." ;
-static INPUT_DIR   : &str = "input" ;
-static OUTPUT_DIR  : &str = "output" ;
+const CURRENT_DIR : &str = "." ;
+const INPUT_DIR   : &str = "input" ;
+const OUTPUT_DIR  : &str = "output" ;
 
 
 
